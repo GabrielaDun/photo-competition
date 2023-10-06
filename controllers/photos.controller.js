@@ -1,4 +1,4 @@
-const Photo = require('../models/photo.model');
+const Photo = require('../models/Photo.model.js');
 
 /****** SUBMIT PHOTO ********/
 
@@ -11,15 +11,22 @@ exports.add = async (req, res) => {
     if(title && author && email && file) { // if fields are not empty...
 
       const fileName = file.path.split('/').slice(-1)[0]; // cut only filename from full path, e.g. C:/test/abc.jpg -> abc.jpg
-      const newPhoto = new Photo({ title, author, email, src: fileName, votes: 0 });
-      await newPhoto.save(); // ...save new photo in DB
-      res.json(newPhoto);
+      const fileExt = fileName.split('.').slice(-1)[0];
+      if (fileExt === 'jpg' || 'png' || 'gif') {
+        const newPhoto = new Photo({ title, author, email, src: fileName, votes: 0 });
+        await newPhoto.save(); // ...save new photo in DB
+        res.json(newPhoto);
+      }
+      else {
+        throw new Error('Wrong input!');
+      }
 
     } else {
       throw new Error('Wrong input!');
     }
 
   } catch(err) {
+    console.log(err);
     res.status(500).json(err);
   }
 
