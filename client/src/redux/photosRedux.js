@@ -75,16 +75,16 @@ export const loadPhotosRequest = () => {
   };
 };
 
-export const votePhotoRequest = (id) => {
+export const votePhotoRequest = (id, IP) => {
   return async dispatch => {
-
     try {
-      const votes = JSON.parse(localStorage.getItem('votes')) || [];
-      if(votes && votes.indexOf(id) !== -1) return false;
-      await axios.put(`${API_URL}/photos/vote/${id}`);
-      votes.push(id);
-      localStorage.setItem('votes', JSON.stringify(votes));
-      dispatch(votePhoto(id));
+      const response = await axios.put(`${API_URL}/photos/vote/${id}`, {IP});
+      if (response.status === 200) {
+        dispatch(votePhoto(id));
+      } else if (response.status === 500) {
+        console.warn('User has already voted for thsi photo')
+      }
+
     } catch(e) {
       console.error(e);
     }
