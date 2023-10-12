@@ -75,10 +75,10 @@ export const loadPhotosRequest = () => {
   };
 };
 
-export const votePhotoRequest = (id, IP) => {
+export const votePhotoRequest = (id) => {
   return async dispatch => {
     try {
-      const response = await axios.put(`${API_URL}/photos/vote/${id}`, {IP});
+      const response = await axios.put(`${API_URL}/photos/vote/${id}`);
       if (response.status === 200) {
         dispatch(votePhoto(id));
       } else if (response.status === 500) {

@@ -1,14 +1,17 @@
 const Voter = require('../models/Voter.model.js');
 const Photo = require('../models/Photo.model.js');
+const requestIp = require('request-ip');
 
 /****** VOTE FOR PHOTO ********/
 
 exports.vote = async (req, res) => {
   
     try {
-      const voter = await Voter.findOne({user: req.clientIp }) // we search for a voter based on ip address
-      const photoToUpdate = await Photo.findOne({ _id: req.params.id });
+      console.log('7654XXXXXXXXX')
       const clientIp = requestIp.getClientIp(req);
+      const voter = await Voter.findOne({user: clientIp }) // we search for a voter based on ip address
+      const photoToUpdate = await Photo.findOne({ _id: req.params.id });
+      console.log('XXXXXXXXX')
   
       if(!voter) {
         const newVoter = new Voter({
@@ -26,12 +29,13 @@ exports.vote = async (req, res) => {
           voter.votes.push(photoToUpdate._id);
           await voter.save();
           photoToUpdate.votes++;
-          photoToUpdate.save();
+          await photoToUpdate.save();
           res.send({ message: 'OK'})
         }
       }
     } catch(err) {
       res.status(500).json(err);
+      console.log(err)
     }
   
   };
